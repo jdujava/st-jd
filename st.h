@@ -82,6 +82,7 @@ void redraw(void);
 void tfulldirt(void);
 void draw(void);
 
+void externalpipe(const Arg *);
 void printscreen(const Arg *);
 void printsel(const Arg *);
 void sendbreak(const Arg *);
