@@ -7,6 +7,14 @@
  */
 #include <X11/X.h>
 static char *font = "SauceCodePro Nerd Font Mono:pixelsize=15:antialias=true:autohint=true";
+/* Spare fonts */
+static char *font2[] = {
+	"Font Awesome 6 Free Solid:size=10",
+	"Font Awesome 6 Free Regular:size=10",
+	"Material Icons:pixelsize=14:antialias=true:autohint=true",
+	"Material Design Icons:pixelsize=14:antialias=true:autohint=true",
+	"Inconsolata for Powerline:pixelsize=16:antialias=true:autohint=true"
+};
 static int borderpx = 2;
 
 /*
