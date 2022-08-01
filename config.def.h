@@ -5,6 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
+#include <X11/X.h>
 static char *font = "SauceCodePro Nerd Font Mono:pixelsize=15:antialias=true:autohint=true";
 static int borderpx = 2;
 
@@ -180,6 +181,10 @@ static uint forcemousemod = ShiftMask;
  */
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
+	{ ShiftMask,            Button4, kscrollup,      {.i = 5},		0, /* !alt */  -1 },
+	{ ShiftMask,            Button5, kscrolldown,    {.i = 5},		0, /* !alt */  -1 },
+	{ XK_ANY_MOD,           Button4, kscrollup,      {.i = 1},		0, /* !alt */  -1 },
+	{ XK_ANY_MOD,           Button5, kscrolldown,    {.i = 1},		0, /* !alt */  -1 },
 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
 	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
@@ -214,8 +219,10 @@ static Shortcut shortcuts[] = {
 	{ MODKEY,         XK_grave,       externalpipe,     {.v = openurlcmd } },
 	{ TERMMOD,        XK_Y,           externalpipe,     {.v = copyurlcmd } },
 	{ TERMMOD,        XK_O,           externalpipe,     {.v = copyoutput } },
-	{ ShiftMask,      XK_Page_Up,     kscrollup,        {.i = -1} },
-	{ ShiftMask,      XK_Page_Down,   kscrolldown,      {.i = -1} },
+	{ ShiftMask,      XK_Up,          kscrollup,        {.i = +1} },
+	{ ShiftMask,      XK_Down,        kscrolldown,      {.i = +1} },
+	{ ShiftMask,      XK_Page_Up,     kscrollup,        {.i = +10} },
+	{ ShiftMask,      XK_Page_Down,   kscrolldown,      {.i = +10} },
 };
 
 /*
