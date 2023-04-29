@@ -1,3 +1,10 @@
+My fork of `st`.
+
+To set upstream remote to original st repo:
+```sh
+git remote add upstream git://git.suckless.org/st
+```
+
 st - simple terminal
 --------------------
 st is a simple terminal emulator for X which sucks less.
