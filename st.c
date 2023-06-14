@@ -2383,16 +2383,12 @@ tstrsequence(uchar c)
 void
 tcontrolcode(uchar ascii)
 {
-	size_t i;
-
 	switch (ascii) {
 	case '\t':   /* HT */
 		tputtab(1);
 		return;
 	case '\b':   /* BS */
-		for (i = 1; term.c.x && term.line[term.c.y][term.c.x - i].u == 0; ++i)
-			;
-		tmoveto(term.c.x - i, term.c.y);
+		tmoveto(term.c.x - 1, term.c.y);
 		return;
 	case '\r':   /* CR */
 		tmoveto(0, term.c.y);
@@ -2897,7 +2893,8 @@ draw(void)
 	drawregion(0, 0, term.col, term.row);
 	if (TSCREEN.off == 0)
 		xdrawcursor(cx, term.c.y, TLINE(term.c.y)[cx],
-				term.ocx, term.ocy, TLINE(term.ocy)[term.ocx]);
+					term.ocx, term.ocy, TLINE(term.ocy)[term.ocx],
+					TLINE(term.ocy), term.col);
 	term.ocx = cx;
 	term.ocy = term.c.y;
 	xfinishdraw();
