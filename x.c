@@ -2063,6 +2063,7 @@ xdrawglyph(Glyph g, int x, int y)
 void
 xdrawcursor(int cx, int cy, Glyph g, int ox, int oy, Glyph og, Line line, int len)
 {
+	unsigned char cr, cg, cb;
 	Color drawcol;
 	XRenderColor colbg;
 
@@ -2103,14 +2104,24 @@ xdrawcursor(int cx, int cy, Glyph g, int ox, int oy, Glyph og, Line line, int le
 		}
 
 		if (IS_TRUECOL(g.bg)) {
-			colbg.alpha = 0xffff;
-			colbg.red = TRUERED(g.bg);
-			colbg.green = TRUEGREEN(g.bg);
-			colbg.blue = TRUEBLUE(g.bg);
-			XftColorAllocValue(xw.dpy, xw.vis, xw.cmap, &colbg, &drawcol);
+			cr = TRUERED(g.bg) >> 8;
+			cg = TRUEGREEN(g.bg) >> 8;
+			cb = TRUEBLUE(g.bg) >> 8;
 		} else {
-			drawcol = dc.col[g.bg];
+			xgetcolor(g.bg, &cr, &cg, &cb);
 		}
+
+		/* brighten up the background color */
+		cr = (cr + 0x88) / 2;
+		cg = (cg + 0x88) / 2;
+		cb = (cb + 0x88) / 2;
+		g.bg = TRUECOLOR(cr, cg, cb);
+
+		colbg.alpha = 0xffff;
+		colbg.red   = cr << 8;
+		colbg.green = cg << 8;
+		colbg.blue  = cb << 8;
+		XftColorAllocValue(xw.dpy, xw.vis, xw.cmap, &colbg, &drawcol);
 	}
 
 	/* draw the new one */
