@@ -1,8 +1,8 @@
 #!/bin/sh
 
-urlregex="(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)"
-# pdfregex="(pdf:[0-9]*[:]?[a-zA-Z0-9\(\).,/@$&%?$\#=_~-]+( [a-zA-Z0-9\(\).,/@$&%?$\#=_~-]+)*)"
-pdfregex="(pdf:[0-9]*[:]?( *[a-zA-Z0-9\(\)\+>.,/@$&%?$\#=_~-]+)*)"
+urlregex='(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)'
+# pdfregex='(pdf:[0-9]*[:]?[a-zA-Z0-9\(\).,/@$&%?$\#=_~-]+( [a-zA-Z0-9\(\).,/@$&%?$\#=_~-]+)*)'
+pdfregex='(pdf:[0-9]*[:]?( *[a-zA-Z0-9\(\)\+>.,/@$&%?$\#=_~-]+)*)'
 
 urls="$(sed 's/.*│//g' | tr -d '\n' | # first remove linebreaks and mutt sidebars
 	grep -aEo "$urlregex|$pdfregex" | # grep only urls as defined above

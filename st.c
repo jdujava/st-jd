@@ -2041,6 +2041,7 @@ strhandle(void)
 	switch (strescseq.type) {
 	case ']': /* OSC -- Operating System Command */
 		switch (par) {
+		case 8: return; /* avoid significant spamming of stderr log */
 		case 0:
 			if (narg > 1) {
 				xsettitle(strescseq.args[1]);
