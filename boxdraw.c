@@ -31,7 +31,7 @@ isboxdraw(Rune u)
 {
 	Rune block = u & ~0xff;
 	return (boxdraw && block == 0x2500 && boxdata[(uint8_t)u]) ||
-	       (boxdraw_braille && block == 0x2800);
+		   (boxdraw_braille && block == 0x2800);
 }
 
 /* the "index" is actually the entire shape data encoded as ushort */
