@@ -225,6 +225,7 @@ static MouseShortcut mshortcuts[] = {
 static char *openurlcmd[] = { "/bin/sh", "-c", "st-urlhandler -o", "externalpipe", NULL };
 static char *copyurlcmd[] = { "/bin/sh", "-c", "st-urlhandler -c", "externalpipe", NULL };
 static char *copyoutput[] = { "/bin/sh", "-c", "st-copyout", "externalpipe", NULL };
+static char *copyoutall[] = { "/bin/sh", "-c", "xsel -b", "externalpipe", NULL };
 
 static Shortcut shortcuts[] = {
 	/* mask           keysym          function          argument */
@@ -244,6 +245,7 @@ static Shortcut shortcuts[] = {
 	{ MODKEY,         XK_grave,       externalpipe,     {.v = openurlcmd } },
 	{ TERMMOD,        XK_Y,           externalpipe,     {.v = copyurlcmd } },
 	{ TERMMOD,        XK_O,           externalpipe,     {.v = copyoutput } },
+	{ TERMMOD|CTRL,   XK_O,           externalpipe,     {.v = copyoutall } },
 	{ ShiftMask,      XK_Up,          kscrollup,        {.i = +1} },
 	{ ShiftMask,      XK_Down,        kscrolldown,      {.i = +1} },
 	{ ShiftMask,      XK_Page_Up,     kscrollup,        {.i = +10} },
