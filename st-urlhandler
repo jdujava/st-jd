@@ -1,22 +1,22 @@
 #!/bin/sh
 
-urlregex='(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)'
-# pdfregex='(pdf:[0-9]*[:]?[a-zA-Z0-9\(\).,/@$&%?$\#=_~-]+( [a-zA-Z0-9\(\).,/@$&%?$\#=_~-]+)*)'
-pdfregex='(pdf:[0-9]*[:]?( *[a-zA-Z0-9\(\)\+>.,/@$&%?$\#=_~-]+)*)'
+urlregex='(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$\#=_~-]*)'
+magnetregex='(magnet:\\?xt=urn:btih:[a-zA-Z0-9]*)'
+zathuraregex='((zathura|pdf):[0-9]*[:]?[a-zA-Z0-9\(\)\+>.,/@$&%?$\#=_~-]*)'
 
 urls="$(sed 's/.*│//g' | tr -d '\n' | # first remove linebreaks and mutt sidebars
-	grep -aEo "$urlregex|$pdfregex" | # grep only urls as defined above
-	sed -re 's/(\s)*(>)(\s)*//g' |    # handle possible line break
-	uniq |                            # ignore neighboring duplicates
-	sed 's/^www./http:\/\/www\./g')"  # xdg-open will not detect url without http://
+    sed -re 's/(\s)*(> )(\s)*//g' |   # handle possible line break (in `neovim`, see 'showbreak')
+    grep -aEo "$urlregex|$magnetregex|$zathuraregex" | # grep only urls as defined above
+    uniq |                            # ignore neighboring duplicates
+    sed 's/^www./http:\/\/www\./g')"  # xdg-open will not detect url without http://
 
 [ -z "$urls" ] && exit 1
 
 while getopts "hoc" o; do case "${o}" in
-	h) printf "Optional arguments for custom use:\\n  -c: copy\\n  -o: xdg-open\\n  -h: Show this message\\n" && exit 1 ;;
-	o)  # chosen="$(echo "$urls" | dmenu -i -p 'Follow URL: ' -l 10)"
-		chosen="$(echo "$urls" | fmenu -g 100x15 -p 'Follow URL: ')"
-		setsid xdg-open "$chosen" >/dev/null 2>&1 & ;;
-	c) echo "$urls" | fmenu -g 100x15 -p 'Copy URL: ' | tr -d '\n' | xsel -b ;;
-	*) printf "Invalid option: -%s\\n" "$OPTARG" && exit 1 ;;
+    h) printf "Optional arguments for custom use:\\n  -c: copy\\n  -o: xdg-open\\n  -h: Show this message\\n" && exit 1 ;;
+    o) # chosen="$(echo "$urls" | dmenu -i -p 'Follow URL: ' -l 10)"
+        chosen="$(echo "$urls" | fmenu -g 100x15 -p 'Follow URI:')"
+        setsid xdg-open "$chosen" >/dev/null 2>&1 & ;;
+    c) echo "$urls" | fmenu -g 100x15 -p 'Copy URI:' | tr -d '\n' | xsel -b ;;
+    *) printf "Invalid option: -%s\\n" "$OPTARG" && exit 1 ;;
 esac done
