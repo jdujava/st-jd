@@ -50,13 +50,14 @@ index 76b7e0d..542ab3a 100644
  } CSIEscape;
  
  /* STR Escape sequence structs */
-@@ -159,6 +161,7 @@ static void ttywriteraw(const char *, size_t);
+@@ -159,7 +161,8 @@ static void ttywriteraw(const char *, size_t);
  
  static void csidump(void);
  static void csihandle(void);
 +static void readcolonargs(char **, int, int[][CAR_PER_ARG]);
  static void csiparse(void);
  static void csireset(void);
+ static void osc_color_response(int, int, int);
  static int eschandle(uchar);
 @@ -1131,6 +1134,28 @@ tnewline(int first_col)
  	tmoveto(first_col ? 0 : term.c.x, y);
@@ -247,7 +248,7 @@ index 210f184..3a0e79e 100644
  
  	/* Render underline and strikethrough. */
  	if (base.mode & ATTR_UNDERLINE) {
--		XftDrawRect(xw.draw, fg, winx, winy + dc.font.ascent + 1,
+-		XftDrawRect(xw.draw, fg, winx, winy + dc.font.ascent * chscale + 1,
 -				width, 1);
 +		// Underline Color
 +		const int widthThreshold  = 28; // +1 width every widthThreshold px of font
