@@ -15,8 +15,8 @@ urls="$(sed 's/.*│//g' | tr -d '\n' | # first remove linebreaks and mutt sideb
 while getopts "hoc" o; do case "${o}" in
     h) printf "Optional arguments for custom use:\\n  -c: copy\\n  -o: xdg-open\\n  -h: Show this message\\n" && exit 1 ;;
     o) # chosen="$(echo "$urls" | dmenu -i -p 'Follow URL: ' -l 10)"
-        chosen="$(echo "$urls" | fmenu -g 100x15 -p 'Follow URI:')"
-        setsid xdg-open "$chosen" >/dev/null 2>&1 & ;;
+        chosen="$(echo "$urls" | fmenu -g 100x15 -p 'Follow URI:' -m)"
+        for uri in $chosen; do setsid xdg-open "$uri" >/dev/null 2>&1 & done ;;
     c) echo "$urls" | fmenu -g 100x15 -p 'Copy URI:' | tr -d '\n' | xsel -b ;;
     *) printf "Invalid option: -%s\\n" "$OPTARG" && exit 1 ;;
 esac done
