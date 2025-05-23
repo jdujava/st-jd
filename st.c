@@ -48,6 +48,11 @@
 #define TLINEOFFSET(y) (((y) + TSCREEN.cur - TSCREEN.off + TSCREEN.size) % TSCREEN.size)
 #define TLINE(y) (TSCREEN.buffer[TLINEOFFSET(y)])
 
+/* following indexes from the beginning (oldest line y=0) of the screen buffer */
+/*                     to the end (most recent line y=TSCREEN.size-1) */
+#define TLINEOFFSET_HIST(y) (((y) + TSCREEN.cur + term.row) % TSCREEN.size)
+#define TLINE_HIST(y) (TSCREEN.buffer[TLINEOFFSET_HIST(y)])
+
 enum term_mode {
 	MODE_WRAP        = 1 << 0,
 	MODE_INSERT      = 1 << 1,
@@ -195,6 +200,7 @@ static void tdeleteline(int);
 static void tinsertblank(int);
 static void tinsertblankline(int);
 static int tlinelen(int);
+static int tlinehistlen(int);
 static void tmoveto(int, int);
 static void tmoveato(int, int);
 static void tnewline(int);
@@ -426,6 +432,20 @@ tlinelen(int y)
 {
 	int i = term.col;
 	Line line = TLINE(y);
+
+	if (line[i - 1].mode & ATTR_WRAP)
+		return i;
+
+	while (i > 0 && line[i - 1].u == ' ')
+		--i;
+
+	return i;
+}
+int
+tlinehistlen(int y)
+{
+	int i = term.col;
+	Line line = TLINE_HIST(y);
 
 	if (line[i - 1].mode & ATTR_WRAP)
 		return i;
@@ -2196,17 +2216,17 @@ externalpipe(const Arg *arg)
 	/* ignore sigpipe for now, in case child exists early */
 	oldsigpipe = signal(SIGPIPE, SIG_IGN);
 	newline = 0;
-	for (n = 0; n < term.row; n++) {
-		bp = TLINE(n);
-		lastpos = MIN(tlinelen(n) + 1, term.col) - 1;
-		if (lastpos < 0)
-			break;
-		end = &bp[lastpos + 1];
+	for (n = 0; n < TSCREEN.size; n++) { // go through all lines in history
+		bp = TLINE_HIST(n);              // pick line from the start of the "history" buffer
+		if(bp == NULL)                   // if it was not yet initialized, skip it
+			continue;
+		lastpos = tlinehistlen(n);       // find the length of the line
+		end = &bp[lastpos];              // already should not touch this end
 		for (; bp < end; ++bp)
 			if (xwrite(to[1], buf, utf8encode(bp->u, buf)) < 0)
 				break;
-		if ((newline = TLINE(n)[lastpos].mode & ATTR_WRAP))
-			continue;
+		if (lastpos > 0 && (newline = TLINE_HIST(n)[lastpos-1].mode & ATTR_WRAP))
+			continue;   // skip printing newline if the line wraps
 		if (xwrite(to[1], "\n", 1) < 0)
 			break;
 		newline = 0;
